@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Maghreb Tierlist</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-elevated:#121212;
+    --panel:#161616;
+    --panel-2:#1d1d1d;
+    --border:rgba(255,255,255,0.09);
+    --teal:#00c979;
+    --teal-dim:#00874a;
+    --terracotta:#ff3b3b;
+    --gold:#e8c468;
+    --cream:#f2ede4;
+    --text:#eae6df;
+    --text-dim:#8f8f8f;
+    --danger:#ff3b3b;
+    --radius:10px;
+    --flag-red:#ff3b3b;
+    --flag-green:#00c979;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:transparent;color:var(--text);font-family:'IBM Plex Sans',sans-serif;}
+  #app{min-height:100vh;background:radial-gradient(ellipse at 50% -10%, #1a1a1a 0%, var(--bg) 55%);position:relative;overflow:hidden;}
+
+  @keyframes pulseGlow{
+    0%,100%{filter:drop-shadow(0 0 10px rgba(0,201,121,0.35)) drop-shadow(0 0 8px rgba(255,59,59,0.22));}
+    50%{filter:drop-shadow(0 0 18px rgba(0,201,121,0.6)) drop-shadow(0 0 15px rgba(255,59,59,0.4));}
+  }
+  @keyframes shimmerText{
+    0%{background-position:0% center;}
+    100%{background-position:200% center;}
+  }
+  @keyframes floatGlow{
+    0%,100%{transform:translate(0,0);}
+    50%{transform:translate(-2%,2%);}
+  }
+  @keyframes popIn{
+    0%{transform:scale(0.94);opacity:0;}
+    100%{transform:scale(1);opacity:1;}
+  }
+
+  /* fine grain texture over everything, gives the panels a "material" feel */
+  .grain{position:fixed;inset:0;pointer-events:none;opacity:0.05;z-index:1;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* subtle green/red duo-tone grid, echoing the icon */
+  .zellige-bg{
+    position:absolute;inset:-5%;pointer-events:none;opacity:0.06;
+    background-image:
+      radial-gradient(circle at 0 0, transparent 9px, var(--flag-green) 9.5px, var(--flag-green) 10px, transparent 10.5px),
+      radial-gradient(circle at 40px 40px, transparent 9px, var(--flag-red) 9.5px, var(--flag-red) 10px, transparent 10.5px);
+    background-size:40px 40px;
+    animation:floatGlow 14s ease-in-out infinite;
+  }
+
+  .wrap{position:relative;max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+  /* header */
+  .hero{display:flex;flex-direction:column;gap:6px;padding:18px 0 26px;border-bottom:1px solid var(--border);margin-bottom:22px;position:relative;}
+  .hero::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,196,104,0.55),rgba(0,201,121,0.4),transparent);}
+  .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-mark{width:48px;height:48px;flex-shrink:0;user-select:none;animation:pulseGlow 3.4s ease-in-out infinite;}
+  .brand h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:26px;letter-spacing:0.5px;margin:0;
+    background:linear-gradient(90deg,var(--cream) 20%,var(--gold) 45%,var(--teal) 55%,var(--cream) 80%);
+    background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmerText 7s linear infinite;}
+  .brand small{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-top:2px;}
+  .header-actions{display:flex;gap:8px;align-items:center;}
+
+  .btn{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:13px;border-radius:8px;padding:9px 14px;border:1px solid var(--border);background:var(--panel-2);color:var(--text);cursor:pointer;transition:transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;position:relative;overflow:hidden;}
+  .btn:hover{background:#293238;border-color:rgba(217,164,65,0.35);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.35);}
+  .btn:active{transform:scale(0.97);}
+  .btn-gold{background:linear-gradient(180deg,var(--gold),#c68f36);color:#1a1408;border:none;box-shadow:0 2px 10px rgba(232,196,104,0.25);}
+  .btn-gold:hover{filter:brightness(1.07);box-shadow:0 4px 18px rgba(232,196,104,0.4);}
+  .btn-gold::after{content:'';position:absolute;top:0;left:-60%;width:35%;height:100%;background:linear-gradient(115deg,transparent,rgba(255,255,255,0.65),transparent);transform:skewX(-20deg);transition:left .55s ease;}
+  .btn-gold:hover::after{left:135%;}
+  .btn-ghost{background:transparent;}
+  .btn-danger{background:transparent;color:var(--terracotta);border-color:rgba(255,59,59,0.4);}
+  .btn-danger:hover{background:rgba(255,59,59,0.12);}
+  .btn-sm{padding:6px 10px;font-size:12px;}
+
+  /* mode tabs */
+  .modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
+  .mode-chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 8px 10px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--text-dim);cursor:pointer;transition:all .15s ease;display:inline-flex;align-items:center;gap:7px;}
+  .mode-chip:hover{color:var(--text);border-color:rgba(217,164,65,0.4);transform:translateY(-1px);}
+  .mode-chip.active{background:var(--teal);border-color:var(--teal);color:#04251a;font-weight:700;box-shadow:0 0 16px rgba(0,201,121,0.45);}
+  .mode-icon{width:15px;height:15px;flex-shrink:0;display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5));}
+
+  .subrow{display:flex;justify-content:space-between;align-items:center;margin:20px 0 16px;flex-wrap:wrap;gap:10px;}
+  .subrow-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .view-toggle{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .view-toggle button{border:none;background:transparent;color:var(--text-dim);font-family:'IBM Plex Sans';font-weight:600;font-size:12.5px;padding:8px 14px;cursor:pointer;}
+  .view-toggle button.active{background:var(--panel-2);color:var(--gold);}
+  .section-label{font-family:'Cairo',sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:9px;}
+  .section-label::before{content:'';display:inline-block;width:4px;height:15px;border-radius:2px;background:linear-gradient(180deg,var(--teal),var(--gold));box-shadow:0 0 8px rgba(0,201,121,0.5);}
+
+  .search-bar{position:relative;display:flex;align-items:center;}
+  .search-bar input{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px 8px 32px;font-size:13px;font-family:'IBM Plex Sans';min-width:190px;transition:border-color .15s ease, box-shadow .15s ease;}
+  .search-bar input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,196,104,0.15);}
+  .search-bar input::placeholder{color:var(--text-dim);}
+  .search-icon{position:absolute;left:9px;width:15px;height:15px;color:var(--text-dim);pointer-events:none;}
+
+  /* leaderboard */
+  .board{display:flex;flex-direction:column;gap:8px;}
+  .row{display:grid;grid-template-columns:44px 52px 1fr auto auto;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px 10px 17px;transition:border-color .15s ease, transform .12s ease, box-shadow .15s ease;cursor:pointer;position:relative;overflow:hidden;animation:popIn .25s ease both;}
+  .row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--teal),var(--gold));opacity:0;transition:opacity .15s ease;}
+  .row:hover{border-color:rgba(217,164,65,0.3);transform:translateX(3px);box-shadow:0 4px 20px rgba(0,0,0,0.35);}
+  .row:hover::before{opacity:1;}
+  .rank{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--text-dim);text-align:center;}
+  .rank.top1{color:var(--gold);font-size:18px;text-shadow:0 0 10px rgba(232,196,104,0.6);}
+  .rank.top2{color:#cdd8db;text-shadow:0 0 8px rgba(205,216,219,0.4);}
+  .rank.top3{color:#c98b58;text-shadow:0 0 8px rgba(201,139,88,0.4);}
+  .skin-thumb{width:44px;height:44px;border-radius:8px;background:var(--bg-elevated);overflow:hidden;display:flex;align-items:flex-end;justify-content:center;border:1px solid var(--border);image-rendering:pixelated;position:relative;}
+  .skin-thumb.skin-loading{background:linear-gradient(100deg, var(--bg-elevated) 30%, var(--panel-2) 50%, var(--bg-elevated) 70%);background-size:200% 100%;animation:skinShimmer 1.3s ease-in-out infinite;}
+  .skin-thumb.skin-loading img{opacity:0;}
+  @keyframes skinShimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  .skin-thumb img{width:100%;image-rendering:pixelated;object-fit:contain;object-position:bottom;}
+  .pname{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .pname .un{font-weight:700;font-size:14.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pname .acc{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;}
+  .acc.premium{color:#00e08a;}
+  .acc.cracked{color:var(--gold);}
+  .pts{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--cream);text-align:right;white-space:nowrap;}
+  .pts span{font-size:10px;color:var(--text-dim);display:block;font-weight:500;letter-spacing:1px;}
+
+  /* tier badge (zellige star) */
+  .tier-badge{position:relative;width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 0 6px var(--tc, transparent));}
+  .tier-badge svg{position:absolute;inset:0;width:100%;height:100%;}
+  .tier-badge span{position:relative;font-family:'Cairo',sans-serif;font-weight:900;font-size:11px;color:var(--cream);letter-spacing:0.5px;text-shadow:0 1px 3px rgba(0,0,0,0.65),0 0 2px rgba(0,0,0,0.5);}
+
+  /* tierboard */
+  .tier-group{margin-bottom:16px;}
+  .tier-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .tier-head-badge{width:36px;height:36px;}
+  .tier-head-badge span{font-size:10px;}
+  .tier-title{font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;color:var(--cream);}
+  .tier-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);}
+  .tier-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+  .tier-cards{display:flex;flex-wrap:wrap;gap:10px;}
+  .mini-card{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:7px 12px 7px 7px;cursor:pointer;transition:border-color .15s ease;}
+  .mini-card:hover{border-color:rgba(217,164,65,0.3);}
+  .mini-card .skin-thumb{width:34px;height:34px;}
+  .mini-card .un{font-weight:600;font-size:13px;}
+  .mini-card .pts-mini{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-left:4px;}
+  .empty-tier{font-size:12.5px;color:var(--text-dim);font-style:italic;padding:6px 2px;}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-dim);}
+  .load-error-state{max-width:480px;margin:80px auto;text-align:center;padding:40px 28px;background:var(--panel);border:1px solid rgba(230,90,80,0.3);border-radius:14px;}
+  .load-error-state h3{color:#e65a50;margin:0 0 8px;font-size:18px;}
+  .load-error-state p{color:var(--text-dim);font-size:13px;margin:0 0 18px;}
+  .toast-float{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-elevated);border:1px solid rgba(232,196,104,0.4);color:var(--cream);padding:10px 20px;border-radius:999px;font-size:12.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.5);z-index:200;animation:toastIn .2s ease-out;}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .discord-link-btn{display:inline-flex;align-items:center;gap:6px;background:#5865F2;color:#fff;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;text-decoration:none;border:none;cursor:pointer;}
+  .discord-link-btn:hover{filter:brightness(1.1);}
+  .empty-state h3{font-family:'Cairo',sans-serif;color:var(--cream);font-size:18px;margin-bottom:6px;}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(8,10,12,0.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .modal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:14px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(232,196,104,0.06);animation:popIn .18s ease both;}
+  .modal.wide{max-width:640px;}
+  .modal h2{font-family:'Cairo',sans-serif;font-size:19px;margin:0 0 4px;color:var(--cream);}
+  .modal .sub{font-size:12.5px;color:var(--text-dim);margin:0 0 18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:11.5px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+  .field input, .field select{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:9px 11px;font-size:14px;font-family:'IBM Plex Sans';}
+  .field input:focus, .field select:focus{outline:none;border-color:var(--gold);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+  .modal-close{position:sticky;top:0;float:right;background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;line-height:1;}
+  .modal-err{background:rgba(255,59,59,0.12);border:1px solid rgba(255,59,59,0.35);color:#ff9b9b;font-size:12.5px;padding:8px 10px;border-radius:7px;margin-bottom:14px;}
+  .modal-ok{background:rgba(0,201,121,0.12);border:1px solid rgba(0,201,121,0.35);color:#7cf0bb;font-size:12.5px;padding:8px 10px;border-radius:7px;margin-bottom:14px;}
+
+  .mode-table{width:100%;border-collapse:collapse;margin-top:4px;}
+  .mode-table th{text-align:left;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);padding:6px 6px;border-bottom:1px solid var(--border);}
+  .mode-table td{padding:6px 6px;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .mode-table td.mname{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream);text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+  .mode-table select, .mode-table input{padding:6px 8px;font-size:12.5px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;width:100%;}
+
+  .admin-list{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .admin-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;}
+  .admin-status{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.5px;}
+  .admin-status.active{color:#00e08a;}
+  .admin-status.soon{color:var(--gold);}
+  .admin-status.expired{color:var(--terracotta);}
+  .activity-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;}
+  .activity-row{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
+  .activity-row.reverted{opacity:0.55;}
+  .activity-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;}
+  .activity-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;padding:3px 8px;border-radius:999px;font-weight:700;}
+  .activity-tag.act-add{background:rgba(0,201,121,0.16);color:#00e08a;}
+  .activity-tag.act-edit{background:rgba(232,196,104,0.16);color:var(--gold);}
+  .activity-tag.act-delete{background:rgba(255,59,59,0.16);color:var(--terracotta);}
+  .activity-player{font-weight:700;color:var(--text);}
+  .activity-actor, .activity-time{color:var(--text-dim);font-size:11.5px;}
+  .activity-time{margin-left:auto;font-family:'JetBrains Mono',monospace;}
+  .activity-diff{margin:8px 0 0;padding-left:18px;font-size:12px;color:var(--text-dim);line-height:1.6;}
+  .activity-actions{margin-top:8px;display:flex;justify-content:flex-end;}
+  .session-pill{display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);border-radius:999px;padding:6px 12px 6px 8px;font-size:12.5px;}
+  .session-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);}
+  .note{font-size:11.5px;color:var(--text-dim);line-height:1.5;margin-top:4px;}
+  .divider{height:1px;background:var(--border);margin:18px 0;}
+  .tab-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .tab-row button{flex:1;min-width:110px;background:var(--panel);border:1px solid var(--border);color:var(--text-dim);padding:8px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;}
+  .tab-row button.active{background:var(--panel-2);color:var(--gold);border-color:rgba(217,164,65,0.4);}
+  .skin-upload-row{display:flex;align-items:center;gap:12px;}
+  .skin-upload-preview{width:56px;height:56px;flex-shrink:0;border-radius:8px;background:var(--bg-elevated);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;image-rendering:pixelated;}
+  .skin-upload-preview img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;}
+  .skin-upload-preview span{font-size:9.5px;color:var(--text-dim);text-align:center;padding:2px;}
+  .skin-upload-controls{display:flex;gap:8px;}
+  .player-manage-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;}
+  .pm-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:7px 10px;}
+  .pm-row .un{font-size:13px;font-weight:600;}
+  .pm-actions{display:flex;gap:6px;}
+
+  .profile-modal{max-width:460px;}
+  .profile-head{display:flex;align-items:center;gap:14px;padding-top:6px;}
+  .profile-skin-thumb{width:64px;height:64px;border-radius:10px;}
+  .profile-id{flex:1;min-width:0;}
+  .profile-id h2{margin:0 0 4px;}
+  .discord-tag{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#5865F2;color:#fff;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;width:fit-content;}
+  .discord-tag:hover{filter:brightness(1.1);}
+  .profile-overall{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+  .profile-overall-pts{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:24px;color:var(--gold);}
+  .profile-tiers{display:flex;flex-direction:column;gap:8px;}
+  .profile-tier-row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:8px 12px;}
+  .profile-tier-badge{width:38px;height:38px;flex-shrink:0;}
+  .profile-tier-badge span{font-size:10px;}
+  .profile-tier-info{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .profile-tier-mode{font-weight:700;font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:7px;}
+  .profile-tier-pts{font-size:14px;}
+  .profile-overall-pts{text-shadow:0 0 14px rgba(232,196,104,0.55);}
+
+  .rank-arrow{display:inline-block;font-size:10px;margin-left:6px;vertical-align:middle;}
+  .rank-arrow.up{color:var(--teal);}
+  .rank-arrow.down{color:var(--terracotta);}
+  .rank-arrow.flat{color:var(--text-dim);}
+  .un-flag{margin-right:4px;}
+
+  .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
+  .filter-chip{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.5px;padding:6px 11px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--text-dim);cursor:pointer;transition:all .15s ease;}
+  .filter-chip:hover{color:var(--text);border-color:rgba(217,164,65,0.4);}
+  .filter-chip.active{background:rgba(0,201,121,0.16);border-color:var(--teal);color:var(--teal);}
+  .filter-select{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 10px;font-size:12.5px;font-family:'IBM Plex Sans';cursor:pointer;}
+
+  .compare-toggle{width:20px;height:20px;border-radius:5px;border:1px solid var(--border);background:var(--panel-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;color:var(--text-dim);font-size:12px;}
+  .compare-toggle.on{background:var(--gold);border-color:var(--gold);color:#1a1408;}
+  .compare-bar{position:sticky;bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg-elevated);border:1px solid rgba(232,196,104,0.35);border-radius:12px;padding:10px 14px;margin-top:14px;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+  .compare-bar span{font-size:12.5px;color:var(--text-dim);}
+  .compare-table{width:100%;border-collapse:collapse;margin-top:10px;}
+  .compare-table th, .compare-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12.5px;text-align:center;}
+  .compare-table th{color:var(--text-dim);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;}
+  .compare-table td.mname{text-align:left;font-family:'JetBrains Mono',monospace;color:var(--cream);text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+  .compare-head{display:flex;flex-direction:column;align-items:center;gap:4px;}
+
+  .chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-top:10px;}
+  .peak-note{font-size:10.5px;color:var(--gold);margin-top:2px;}
+
+  @media (max-width:640px){
+    .row{grid-template-columns:32px 40px 1fr auto;gap:10px;}
+    .tier-badge.pts-col{display:none;}
+    .brand h1{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="zellige-bg"></div>
+  <div class="grain"></div>
+  <div class="wrap" id="root"></div>
+</div>
+<script>
+/* ===================== CONFIG ===================== */
+const MODES = ['sword','axe','uhc','mace','smp','nethpot','crystal'];
+const MODE_LABELS = {sword:'Sword',axe:'Axe',uhc:'UHC',mace:'Mace',smp:'SMP',nethpot:'NethPot',crystal:'Crystal'};
+const TIERS = ['HT1','HT2','HT3','HT4','HT5','LT1','LT2','LT3','LT4','LT5'];
+const TIER_DEFAULT_POINTS = {HT1:100,HT2:80,HT3:60,HT4:40,HT5:20,LT1:90,LT2:70,LT3:50,LT4:30,LT5:10};
+const TIER_COLORS = {HT1:'#e8c468',HT2:'#00e08a',HT3:'#00c979',HT4:'#00a866',HT5:'#0f7a53',LT1:'#ff3b3b',LT2:'#e8382f',LT3:'#c9302a',LT4:'#a12a2a',LT5:'#7a2222'};
+// Regions are Morocco's 12 administrative districts (site is Morocco-only).
+// NOTE: variable/function names still say "country"/"COUNTRIES" internally to avoid a huge rename,
+// but the values and all UI labels now represent Moroccan districts.
+const COUNTRIES = {
+  'tanger-tetouan-al-hoceima': {label:'Tanger-Tétouan-Al Hoceïma', flag:'📍'},
+  'oriental': {label:"L'Oriental", flag:'📍'},
+  'fes-meknes': {label:'Fès-Meknès', flag:'📍'},
+  'rabat-sale-kenitra': {label:'Rabat-Salé-Kénitra', flag:'📍'},
+  'beni-mellal-khenifra': {label:'Béni Mellal-Khénifra', flag:'📍'},
+  'casablanca-settat': {label:'Casablanca-Settat', flag:'📍'},
+  'marrakech-safi': {label:'Marrakech-Safi', flag:'📍'},
+  'draa-tafilalet': {label:'Drâa-Tafilalet', flag:'📍'},
+  'souss-massa': {label:'Souss-Massa', flag:'📍'},
+  'guelmim-oued-noun': {label:'Guelmim-Oued Noun', flag:'📍'},
+  'laayoune-sakia-el-hamra': {label:'Laâyoune-Sakia El Hamra', flag:'📍'},
+  'dakhla-oued-ed-dahab': {label:'Dakhla-Oued Ed-Dahab', flag:'📍'}
+};
+const DEFAULT_DISTRICT = 'casablanca-settat';
+
+function emptyModes(){
+  const m = {};
+  MODES.forEach(k => m[k] = {tier:'LT5', points:TIER_DEFAULT_POINTS.LT5, prevPoints:null, peakTier:'LT5'});
+  return m;
+}
+function tierRank(t){ const i = TIERS.indexOf(t); return i===-1 ? TIERS.length : i; }
+function betterTier(a,b){ return tierRank(a) <= tierRank(b) ? a : b; }
+function countryFlag(code){ return (COUNTRIES[code] || {}).flag || ''; }
+function countryLabel(code){ return (COUNTRIES[code] || {}).label || ''; }
+
+/* ===================== STATE ===================== */
+let state = {
+  players: [],
+  admins: [],
+  ownerPass: null,
+  ownerFactor2: null,
+  ownerFactor3: null,
+  ownerLoginStep: 1,
+  currentMode: 'overall',
+  view: 'leaderboard',
+  session: null,       // {role:'owner'} | {role:'admin', username}
+  modalOpen: false,
+  modalTab: 'login',   // login | setup | add | manage | admins
+  editingId: null,
+  editForm: null,
+  loginErr: '',
+  formErr: '',
+  toast: '',
+  profileId: null,
+  searchQuery: '',
+  manageSearchQuery: '',
+  activityLog: [],
+  settings: { discordWebhook: '' },
+  sortMode: 'points',        // points | az
+  filterAccType: 'all',      // all | premium | cracked
+  filterCountry: 'all',
+  compareIds: [],
+  compareOpen: false
+};
+
+/* ===================== STORAGE ===================== */
+// Supabase persistence for the player data. The publishable key is safe to use in browser code.
+const SUPABASE_URL = 'https://gbrbajsdhvkxnchyhkms.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jfHlF0EbnEz6vc5iSmHjmQ_h5xFfzDI';
+const SUPABASE_STATE_ROW_ID = 1;
+let supabasePlayerCache = null;
+
+async function supabaseRequest(path, options={}){
+  const headers = {
+    apikey: SUPABASE_PUBLISHABLE_KEY,
+    Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {...options, headers});
+  if(!res.ok){
+    const body = await res.text().catch(()=> '');
+    throw new Error(`Supabase ${res.status}: ${body}`);
+  }
+  if(res.status === 204) return null;
+  return res.json();
+}
+
+async function getSupabasePlayerState(){
+  if(supabasePlayerCache !== null) return supabasePlayerCache;
+  const rows = await supabaseRequest(`players?id=eq.${SUPABASE_STATE_ROW_ID}&select=data`);
+  supabasePlayerCache = rows?.[0]?.data || {};
+  return supabasePlayerCache;
+}
+
+async function saveSupabasePlayerState(key, val){
+  const data = await getSupabasePlayerState();
+  data[key] = val;
+  supabasePlayerCache = data;
+  const rows = await supabaseRequest(`players?id=eq.${SUPABASE_STATE_ROW_ID}&select=id`);
+  if(rows.length){
+    await supabaseRequest(`players?id=eq.${SUPABASE_STATE_ROW_ID}`, {
+      method:'PATCH',
+      headers:{Prefer:'return=minimal'},
+      body:JSON.stringify({data})
+    });
+  } else {
+    await supabaseRequest('players', {
+      method:'POST',
+      headers:{Prefer:'return=minimal'},
+      body:JSON.stringify({id:SUPABASE_STATE_ROW_ID, name:'__SITE_STATE__', tier:'', points:0, skin:'', data})
+    });
+  }
+}
+
+async function safeGetJSON(key, fallback){
+  // Player data is stored in Supabase so edits survive refreshes and devices.
+  if(key === 'ml-players-v1'){
+    try{
+      const data = await getSupabasePlayerState();
+      return data[key] ?? fallback;
+    }catch(e){
+      console.error('Supabase load failed:', e);
+      return fallback;
+    }
+  }
+  // Other UI/admin settings remain available locally on the current browser.
+  try{
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  }catch(e){ return fallback; }
+}
+
+async function saveJSON(key, val){
+  if(key === 'ml-players-v1'){
+    try{
+      await saveSupabasePlayerState(key, val);
+      return;
+    }catch(e){
+      console.error('Supabase player save failed:', e);
+      showToast?.('Could not save player changes to Supabase.');
+      return;
+    }
+  }
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.error('local save failed', e); }
+}
+
+async function loadAll(){
+  state.loadError = false;
+  state.players = await safeGetJSON('ml-players-v1', []);
+  state.admins = await safeGetJSON('ml-admins-v1', []);
+  state.activityLog = await safeGetJSON('ml-activity-v1', []);
+  state.settings = await safeGetJSON('ml-settings-v1', { discordWebhook: '', discordInvite: '' });
+  state.ownerPass = await safeGetJSON('ml-owner-pass-v1', null);
+  if(state.ownerPass === null){
+    state.ownerPass = 'jawehara';
+    await saveJSON('ml-owner-pass-v1', state.ownerPass);
+  }
+  state.ownerFactor2 = await safeGetJSON('ml-owner-2fa1-v1', null);
+  if(state.ownerFactor2 === null){
+    state.ownerFactor2 = 'mahraki';
+    await saveJSON('ml-owner-2fa1-v1', state.ownerFactor2);
+  }
+  state.ownerFactor3 = await safeGetJSON('ml-owner-2fa2-v1', null);
+  if(state.ownerFactor3 === null){
+    state.ownerFactor3 = '240109';
+    await saveJSON('ml-owner-2fa2-v1', state.ownerFactor3);
+  }
+  await restoreSession();
+  applyProfileFromURL();
+  render();
+}
+function applyProfileFromURL(){
+  const params = new URLSearchParams(location.search);
+  const uname = params.get('player');
+  if(!uname) return;
+  const type = params.get('type');
+  const matches = state.players.filter(x => x.username.toLowerCase() === uname.toLowerCase());
+  const p = type ? (matches.find(x => x.accountType === type) || matches[0]) : matches[0];
+  if(p) state.profileId = p.id;
+}
+
+/* ===================== TOAST NOTIFICATIONS ===================== */
+let toastTimer = null;
+function showToast(msg){
+  state.toast = msg;
+  render();
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ state.toast=''; render(); }, 2800);
+}
+function renderFloatingToast(){
+  if(!state.toast) return '';
+  return `<div class="toast-float">${esc(state.toast)}</div>`;
+}
+
+/* ===================== SESSION PERSISTENCE (per-device, personal storage) ===================== */
+async function restoreSession(){
+  const saved = await safeGetPersonal('ml-session-v1', null);
+  if(!saved) return;
+  if(saved.role === 'owner' && saved.pass === state.ownerPass){
+    state.session = {role:'owner'};
+  } else if(saved.role === 'admin'){
+    const stillAdmin = state.admins.find(a => a.username === saved.username && a.password === saved.password);
+    if(stillAdmin && Date.now() < stillAdmin.expiresAt){
+      state.session = {role:'admin', username: stillAdmin.username};
+    } else {
+      await clearPersonal('ml-session-v1');
+    }
+  }
+}
+async function safeGetPersonal(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  }catch(e){ return fallback; }
+}
+async function savePersonal(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.error('personal storage save failed', e); }
+}
+async function clearPersonal(key){
+  try{ localStorage.removeItem(key); }catch(e){ /* ignore */ }
+}
+
+/* ===================== TWO SEPARATE SECRET ENTRY POINTS ===================== */
+// Owner: type the word "maghreb" anywhere on the page (not while typing in a field)
+const OWNER_KEYWORD = 'maghreb';
+let ownerTypeBuffer = '';
+document.addEventListener('keydown', (e)=>{
+  const tag = document.activeElement?.tagName;
+  const typingInField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  if(typingInField || state.modalOpen) return;
+  if(e.key.length === 1 && /[a-zA-Z]/.test(e.key)){
+    ownerTypeBuffer = (ownerTypeBuffer + e.key.toLowerCase()).slice(-OWNER_KEYWORD.length);
+    if(ownerTypeBuffer === OWNER_KEYWORD){
+      ownerTypeBuffer = '';
+      if(!state.session) openOwnerEntry();
+    }
+  } else {
+    ownerTypeBuffer = '';
+  }
+});
+// Admin: Ctrl+Shift+A
+document.addEventListener('keydown', (e)=>{
+  if(e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')){
+    e.preventDefault();
+    if(!state.session) openAdminEntry();
+  }
+});
+// Quick search: press "/" anywhere to jump into the search box
+document.addEventListener('keydown', (e)=>{
+  const tag = document.activeElement?.tagName;
+  const typingInField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  if(e.key === '/' && !typingInField && !state.modalOpen){
+    e.preventDefault();
+    document.getElementById('hubSearch')?.focus();
+  }
+});
+function openOwnerEntry(){
+  state.modalOpen = true; state.loginErr=''; state.formErr='';
+  state.modalTab = 'owner-login';
+  state.ownerLoginStep = 1;
+  render();
+}
+function openAdminEntry(){
+  state.modalOpen = true; state.loginErr=''; state.formErr='';
+  state.modalTab = 'admin-login';
+  render();
+}
+
+/* ===================== HELPERS ===================== */
+function uid(){ return 'p_' + Math.random().toString(36).slice(2,10); }
+
+function starPoints(cx,cy,outerR,innerR,spikes){
+  let rot = -Math.PI/2, step = Math.PI/spikes, pts=[];
+  for(let i=0;i<spikes*2;i++){
+    const r = (i%2===0)?outerR:innerR;
+    pts.push(`${(cx+Math.cos(rot)*r).toFixed(1)},${(cy+Math.sin(rot)*r).toFixed(1)}`);
+    rot += step;
+  }
+  return pts.join(' ');
+}
+function badgeSVG(tier){
+  const color = TIER_COLORS[tier] || '#5c1719';
+  const pts = starPoints(25,25,24,9.5,5);
+  return `<svg viewBox="0 0 50 50" aria-hidden="true"><polygon points="${pts}" fill="${color}" stroke="rgba(0,0,0,0.3)" stroke-width="1"/></svg>`;
+}
+function tierBadge(tier, extraClass=''){
+  const color = TIER_COLORS[tier] || '#5c1719';
+  return `<div class="tier-badge ${extraClass}" style="--tc:${color}">${badgeSVG(tier)}<span>${tier}</span></div>`;
+}
+
+/* small original pixel-style mode icons (14x14) */
+function modeIcon(id){
+  const icons = {
+    overall: `<path d="M4.4 1 H9.6 V4.4 C9.6 6 8.4 7.2 7 7.4 C5.6 7.2 4.4 6 4.4 4.4 Z" fill="currentColor"/><path d="M4.4 1.6 C3 1.6 2.4 3 3.4 4.2 C3.8 4.7 4.3 4.9 4.4 4.9" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/><path d="M9.6 1.6 C11 1.6 11.6 3 10.6 4.2 C10.2 4.7 9.7 4.9 9.6 4.9" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/><rect x="6.3" y="7.3" width="1.4" height="2" fill="currentColor"/><rect x="4.6" y="9.3" width="4.8" height="1.2" rx="0.3" fill="currentColor"/><rect x="5.3" y="10.5" width="3.4" height="2.2" rx="0.3" fill="currentColor"/>`,
+    sword: `<g transform="rotate(45 7 7)"><rect x="6.3" y="0.5" width="1.4" height="7" rx="0.3" fill="currentColor"/><rect x="4.7" y="7.3" width="4.6" height="1.3" rx="0.3" fill="currentColor"/><rect x="6.3" y="8.6" width="1.4" height="3.1" rx="0.3" fill="currentColor"/><rect x="6.05" y="11.6" width="1.9" height="1.3" rx="0.3" fill="currentColor"/></g>`,
+    axe: `<g transform="rotate(35 7 7)"><path d="M6.3 0.6 C9 0.3 10.5 2 10.3 4.3 C10.1 6 8.2 6.6 6.3 6.2 Z" fill="currentColor"/><rect x="6.1" y="0.6" width="1.6" height="12.6" rx="0.4" fill="currentColor"/></g>`,
+    uhc: `<path d="M7 3.4c-1.7-1.7-4.3-1-4.6 1.1C2 6.8 4 9.7 7 12.4c3-2.7 5-5.6 4.6-7.9C11.3 2.4 8.7 1.7 7 3.4z" fill="currentColor"/><path d="M7.3 2.4 C7.6 1.4 8.6 0.8 9.6 1" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/>`,
+    mace: `<circle cx="7" cy="4" r="2.6" fill="currentColor"/><rect x="6.3" y="0.3" width="1.4" height="2" fill="currentColor"/><rect x="6.3" y="5.6" width="1.4" height="1.6" fill="currentColor"/><rect x="3.2" y="3.3" width="1.6" height="1.4" fill="currentColor"/><rect x="9.2" y="3.3" width="1.6" height="1.4" fill="currentColor"/><rect x="6.2" y="7" width="1.6" height="6.3" fill="currentColor"/>`,
+    smp: `<path d="M7 0.8 L12 2.4 V6.6 C12 9.8 9.8 12 7 13.2 C4.2 12 2 9.8 2 6.6 V2.4 Z" fill="currentColor" opacity="0.92"/>`,
+    nethpot: `<rect x="6.2" y="0.6" width="1.6" height="1.8" fill="currentColor"/><path d="M4.8 2.6 H9.2 L10.2 5.4 V11.6 C10.2 12.6 9.4 13.3 8.4 13.3 H5.6 C4.6 13.3 3.8 12.6 3.8 11.6 V5.4 Z" fill="currentColor"/>`,
+    crystal: `<polygon points="7,0.6 9.6,5.4 7,10.2 4.4,5.4" fill="currentColor"/><rect x="4.6" y="11" width="4.8" height="1.8" rx="0.3" fill="currentColor"/>`
+  };
+  return `<svg class="mode-icon" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${icons[id] || ''}</svg>`;
+}
+function skinUrl(player){
+  if(player.skinUrl) return player.skinUrl;
+  const u = encodeURIComponent(player.username);
+  // Both account types render through mc-heads.net's isometric body endpoint
+  // (the same style mctiers.com-type sites use). Premium usernames resolve to their
+  // real Mojang skin; cracked usernames fall back to a deterministic Steve/Alex,
+  // same as vanilla offline-mode behavior — override with a manual skin URL for
+  // an exact SKlauncher skin.
+  return `https://mc-heads.net/body/${u}/100`;
+}
+function skinThumb(player, cls='skin-thumb'){
+  return `<div class="${cls} skin-loading"><img src="${skinUrl(player)}" alt="${player.username} skin" loading="lazy" onload="this.parentElement.classList.remove('skin-loading')" onerror="this.onerror=null;this.src='https://mc-heads.net/body/MHF_Steve/100'"></div>`;
+}
+function totalPoints(player){
+  return MODES.reduce((s,m)=> s + (player.modes?.[m]?.points || 0), 0);
+}
+function pointsDelta(player, mode){
+  if(mode === 'overall') return null;
+  const md = player.modes?.[mode];
+  if(!md || md.prevPoints === null || md.prevPoints === undefined) return null;
+  return md.points - md.prevPoints;
+}
+function rankArrowHTML(delta){
+  if(delta === null || delta === 0) return `<span class="rank-arrow flat" title="No change">•</span>`;
+  if(delta > 0) return `<span class="rank-arrow up" title="+${delta} pts since last update">▲</span>`;
+  return `<span class="rank-arrow down" title="${delta} pts since last update">▼</span>`;
+}
+function pointsHistory(playerId){
+  const entries = state.activityLog
+    .filter(e => e.playerId === playerId && (e.type==='add' || e.type==='edit'))
+    .slice().reverse(); // oldest first
+  const pts = [];
+  entries.forEach(e => {
+    if(e.type === 'add' && e.after){
+      pts.push({ts:e.ts, total: MODES.reduce((s,m)=>s+(e.after.modes?.[m]?.points||0),0)});
+    } else if(e.type === 'edit' && e.after){
+      pts.push({ts:e.ts, total: MODES.reduce((s,m)=>s+(e.after.modes?.[m]?.points||0),0)});
+    }
+  });
+  return pts;
+}
+function sparklineSVG(points, w=220, h=48){
+  if(points.length < 2){
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><text x="${w/2}" y="${h/2+4}" text-anchor="middle" font-size="10" fill="#8f8f8f" font-family="JetBrains Mono">Not enough history yet</text></svg>`;
+  }
+  const vals = points.map(p=>p.total);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = (max - min) || 1;
+  const stepX = w / (points.length - 1);
+  const coords = vals.map((v,i)=>{
+    const x = i * stepX;
+    const y = h - 6 - ((v - min) / range) * (h - 12);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const last = coords[coords.length-1].split(',');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <polyline points="${coords.join(' ')}" fill="none" stroke="#e8c468" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="3" fill="#e8c468"/>
+  </svg>`;
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function searchBarHTML(id, value, placeholder, oninputFn){
+  return `<div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.3" y1="16.3" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="${id}" type="text" value="${esc(value)}" placeholder="${esc(placeholder)}" oninput="${oninputFn}(this.value)">
+  </div>`;
+}
+function matchesSearch(p, query){
+  const q = query.trim().toLowerCase();
+  if(!q) return true;
+  return p.username.toLowerCase().includes(q);
+}
+function matchesFilters(p){
+  if(state.filterAccType !== 'all' && p.accountType !== state.filterAccType) return false;
+  if(state.filterCountry !== 'all' && (p.country||'') !== state.filterCountry) return false;
+  return true;
+}
+
+/* ===================== SHARING: DISCORD WEBHOOK ===================== */
+function postDiscordWebhook(text){
+  const url = state.settings.discordWebhook;
+  if(!url) return;
+  fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({content: text})
+  }).catch(()=>{ /* best-effort, ignore failures */ });
+}
+async function saveSettings(){
+  const url = document.getElementById('stWebhook').value.trim();
+  const invite = document.getElementById('stInvite').value.trim();
+  state.settings.discordWebhook = url;
+  state.settings.discordInvite = invite;
+  await saveJSON('ml-settings-v1', state.settings);
+  showToast('Settings saved.');
+}
+function removeDiscordInvite(){
+  document.getElementById('stInvite').value = '';
+  saveSettings();
+}
+
+/* ===================== SHARING: JSON EXPORT ===================== */
+function exportJSON(){
+  const data = JSON.stringify(state.players, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'maghreb-tierlist-data.json';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ===================== SHARING: PLAYER CARD EXPORT ===================== */
+async function exportPlayerCard(id){
+  const p = state.players.find(x=>x.id===id);
+  if(!p) return;
+  const w = 640, h = 420;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,w,h);
+  const grad = ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,'#161616'); grad.addColorStop(1,'#0a0a0a');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle = 'rgba(232,196,104,0.4)'; ctx.lineWidth = 2; ctx.strokeRect(8,8,w-16,h-16);
+
+  try{
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    await new Promise((res,rej)=>{ img.onload=res; img.onerror=rej; img.src = skinUrl(p); });
+    ctx.drawImage(img, 24, 40, 120, 240);
+  }catch(e){ /* skin blocked by CORS — continue without it */ }
+
+  ctx.fillStyle = '#f2ede4'; ctx.font = '700 26px sans-serif';
+  ctx.fillText(p.username + ' ' + countryFlag(p.country), 170, 70);
+  ctx.fillStyle = '#8f8f8f'; ctx.font = '600 13px monospace';
+  ctx.fillText(p.accountType.toUpperCase(), 170, 92);
+  ctx.fillStyle = '#e8c468'; ctx.font = '800 34px sans-serif';
+  ctx.fillText(totalPoints(p) + ' PTS', 170, 135);
+  ctx.fillStyle = '#8f8f8f'; ctx.font = '600 11px monospace';
+  ctx.fillText('OVERALL TOTAL', 170, 152);
+
+  let y = 190;
+  MODES.forEach(m => {
+    const md = p.modes?.[m] || {tier:'LT5', points:0};
+    ctx.fillStyle = TIER_COLORS[md.tier] || '#5c1719';
+    ctx.fillRect(170, y-12, 10, 10);
+    ctx.fillStyle = '#eae6df'; ctx.font = '600 13px monospace';
+    ctx.fillText(`${MODE_LABELS[m]}: ${md.tier} · ${md.points}pt`, 188, y);
+    y += 24;
+  });
+
+  ctx.fillStyle = '#8f8f8f'; ctx.font = '600 10px monospace';
+  ctx.fillText('MAGHREB TIERLIST · Moroccan PvP Rankings', 24, h-20);
+
+  try{
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `${p.username}-card.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }catch(e){
+    alert("Couldn't export the card as an image (the skin image blocked cross-origin export). Try setting a manually uploaded picture for this player instead.");
+  }
+}
+
+/* ===================== COMPARE PLAYERS ===================== */
+function toggleCompare(id){
+  const idx = state.compareIds.indexOf(id);
+  if(idx > -1){ state.compareIds.splice(idx,1); }
+  else {
+    if(state.compareIds.length >= 2) state.compareIds.shift();
+    state.compareIds.push(id);
+  }
+  render();
+}
+function openCompare(){ if(state.compareIds.length===2){ state.compareOpen = true; render(); } }
+function closeCompare(){ state.compareOpen = false; render(); }
+function clearCompare(){ state.compareIds = []; state.compareOpen = false; render(); }
+
+/* ===================== RENDER ===================== */
+function render(){
+  const root = document.getElementById('root');
+  root.innerHTML = `
+    ${renderHero()}
+    ${renderModes()}
+    ${renderSubrow()}
+    ${renderFilterRow()}
+    ${renderBoard()}
+    ${state.compareIds.length ? renderCompareBar() : ''}
+    ${state.modalOpen ? renderModal() : ''}
+    ${state.profileId ? renderProfileModal() : ''}
+    ${state.compareOpen ? renderCompareModal() : ''}
+    ${renderFloatingToast()}
+  `;
+}
+
+function renderHero(){
+  const sessionPill = state.session
+    ? `<div class="session-pill"><span class="dot"></span>${state.session.role === 'owner' ? 'Owner' : 'Admin · ' + esc(state.session.username)}<button class="btn btn-ghost btn-sm" onclick="logout()" style="padding:2px 8px;margin-left:4px;">Log out</button></div>`
+    : '';
+  return `
+  <div class="hero">
+    <div class="hero-top">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 100 100" title="">
+          <defs>
+            <linearGradient id="hexFill" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#161616"/>
+              <stop offset="55%" stop-color="#0a0a0a"/>
+              <stop offset="100%" stop-color="#050505"/>
+            </linearGradient>
+            <linearGradient id="duo" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00c979"/>
+              <stop offset="48%" stop-color="#e8c468"/>
+              <stop offset="100%" stop-color="#ff3b3b"/>
+            </linearGradient>
+            <linearGradient id="sheen" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.10"/>
+              <stop offset="35%" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="2.1" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <polygon points="50.0,4.0 89.8,27.0 89.8,73.0 50.0,96.0 10.2,73.0 10.2,27.0" fill="url(#hexFill)" stroke="#3a3a3a" stroke-width="1.5"/>
+          <polygon points="50.0,4.0 89.8,27.0 89.8,73.0 50.0,96.0 10.2,73.0 10.2,27.0" fill="url(#sheen)"/>
+          <polygon points="50.00,20.00 57.05,40.29 78.53,40.73 61.41,53.71 67.63,74.27 50.00,62.00 32.37,74.27 38.59,53.71 21.47,40.73 42.95,40.29" fill="none" stroke="url(#duo)" stroke-width="2.6" stroke-linejoin="round" filter="url(#glow)"/>
+          <circle cx="50" cy="50" r="3.4" fill="#e8c468"/>
+        </svg>
+        <div>
+          <h1>Maghreb Tierlist</h1>
+          <small>Moroccan PvP Rankings</small>
+        </div>
+      </div>
+      <div class="header-actions">
+        ${state.settings.discordInvite ? `<a class="discord-link-btn" href="${esc(state.settings.discordInvite)}" target="_blank" rel="noopener noreferrer">Join Discord</a>` : ''}
+        ${sessionPill}
+        ${state.session ? `<button class="btn btn-gold" onclick="openAdmin()">Panel</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderModes(){
+  const chip = (id, label) => `<button class="mode-chip ${state.currentMode===id?'active':''}" onclick="setMode('${id}')">${modeIcon(id)}<span>${label}</span></button>`;
+  return `<div class="modes">
+    ${chip('overall','Overall')}
+    ${MODES.map(m => chip(m, MODE_LABELS[m])).join('')}
+  </div>`;
+}
+
+function renderSubrow(){
+  return `<div class="subrow">
+    <span class="section-label">${state.currentMode==='overall' ? 'Overall Standings' : MODE_LABELS[state.currentMode] + ' Rankings'}</span>
+    <div class="subrow-right">
+      ${searchBarHTML('hubSearch', state.searchQuery, 'Search player...', 'onHubSearch')}
+      ${state.view==='leaderboard' ? `<select class="filter-select" onchange="setSortMode(this.value)">
+        <option value="points" ${state.sortMode==='points'?'selected':''}>Sort: Points</option>
+        <option value="az" ${state.sortMode==='az'?'selected':''}>Sort: A–Z</option>
+      </select>` : ''}
+      <div class="view-toggle">
+        <button class="${state.view==='leaderboard'?'active':''}" onclick="setView('leaderboard')">Leaderboard</button>
+        <button class="${state.view==='tierboard'?'active':''}" onclick="setView('tierboard')" ${state.currentMode==='overall'?'disabled title="Pick a gamemode"':''}>Tier Board</button>
+        <button class="${state.view==='district'?'active':''}" onclick="setView('district')">By District</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFilterRow(){
+  if(state.players.length === 0) return '';
+  const usedCountries = [...new Set(state.players.map(p=>p.country).filter(Boolean))];
+  return `<div class="filter-row">
+    <button class="filter-chip ${state.filterAccType==='all'?'active':''}" onclick="setFilterAccType('all')">All accounts</button>
+    <button class="filter-chip ${state.filterAccType==='premium'?'active':''}" onclick="setFilterAccType('premium')">Premium</button>
+    <button class="filter-chip ${state.filterAccType==='cracked'?'active':''}" onclick="setFilterAccType('cracked')">Cracked</button>
+    ${usedCountries.length ? `<select class="filter-select" onchange="setFilterCountry(this.value)">
+      <option value="all" ${state.filterCountry==='all'?'selected':''}>All districts</option>
+      ${usedCountries.map(c=>`<option value="${c}" ${state.filterCountry===c?'selected':''}>${countryFlag(c)} ${countryLabel(c)}</option>`).join('')}
+    </select>` : ''}
+  </div>`;
+}
+
+function renderBoard(){
+  if(state.players.length === 0){
+    return `<div class="empty-state"><h3>No players yet</h3><p>An owner or admin needs to log in to add the first player.</p></div>`;
+  }
+  if(state.view === 'tierboard' && state.currentMode !== 'overall'){
+    return renderTierboard(state.currentMode);
+  }
+  if(state.view === 'district'){
+    return renderDistrictBoard(state.currentMode);
+  }
+  return renderLeaderboard(state.currentMode);
+}
+
+function renderLeaderboard(mode){
+  let rows;
+  if(state.sortMode === 'az'){
+    rows = [...state.players].sort((a,b)=> a.username.localeCompare(b.username));
+  } else if(mode === 'overall'){
+    rows = [...state.players].sort((a,b)=> totalPoints(b) - totalPoints(a));
+  } else {
+    rows = [...state.players].sort((a,b)=> (b.modes[mode]?.points||0) - (a.modes[mode]?.points||0));
+  }
+  const ranked = rows.map((p,i)=>({p, rank:i+1}));
+  const filtered = ranked.filter(x => matchesSearch(x.p, state.searchQuery) && matchesFilters(x.p));
+  if(filtered.length === 0){
+    return `<div class="empty-state"><h3>No matches</h3><p>No player found for "${esc(state.searchQuery)}".</p></div>`;
+  }
+  return `<div class="board">
+    ${filtered.map(({p, rank})=>{
+      const rankCls = rank===1?'top1':rank===2?'top2':rank===3?'top3':'';
+      const pts = mode === 'overall' ? totalPoints(p) : (p.modes[mode]?.points || 0);
+      const tier = mode === 'overall' ? '' : (p.modes[mode]?.tier || 'LT5');
+      const delta = pointsDelta(p, mode);
+      const compareOn = state.compareIds.includes(p.id);
+      return `<div class="row" onclick="openProfile('${p.id}')">
+        <div class="rank ${rankCls}">#${rank}</div>
+        ${skinThumb(p)}
+        <div class="pname">
+          <span class="un"><span class="un-flag">${countryFlag(p.country)}</span>${esc(p.username)}${mode!=='overall' ? rankArrowHTML(delta) : ''}</span>
+          <span class="acc ${p.accountType}">${p.accountType}</span>
+        </div>
+        ${mode==='overall' ? '' : tierBadge(tier)}
+        <div class="pts">${pts}<span>PTS</span></div>
+        <div class="compare-toggle ${compareOn?'on':''}" title="Add to compare" onclick="event.stopPropagation(); toggleCompare('${p.id}')">${compareOn?'✓':'+'}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderTierboard(mode){
+  const searched = state.players.filter(p => matchesSearch(p, state.searchQuery) && matchesFilters(p));
+  if(state.searchQuery.trim() && searched.length === 0){
+    return `<div class="empty-state"><h3>No matches</h3><p>No player found for "${esc(state.searchQuery)}".</p></div>`;
+  }
+  return `<div class="tierboard">
+    ${TIERS.map(tier => {
+      const players = searched.filter(p => (p.modes[mode]?.tier || 'LT5') === tier)
+        .sort((a,b)=> (b.modes[mode]?.points||0) - (a.modes[mode]?.points||0));
+      return `<div class="tier-group">
+        <div class="tier-head">
+          <div class="tier-badge tier-head-badge">${badgeSVG(tier)}<span>${tier}</span></div>
+          <span class="tier-title">${tier}</span>
+          <span class="tier-count">${players.length} player${players.length===1?'':'s'}</span>
+          <div class="tier-line"></div>
+        </div>
+        <div class="tier-cards">
+          ${players.length ? players.map(p => `
+            <div class="mini-card" onclick="openProfile('${p.id}')">
+              ${skinThumb(p)}
+              <span class="un">${countryFlag(p.country)} ${esc(p.username)}</span>
+              <span class="pts-mini">${p.modes[mode]?.points||0}pt</span>
+            </div>`).join('') : `<div class="empty-tier">No players in this tier</div>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderDistrictBoard(mode){
+  const searched = state.players.filter(p => matchesSearch(p, state.searchQuery) && matchesFilters(p));
+  if(state.searchQuery.trim() && searched.length === 0){
+    return `<div class="empty-state"><h3>No matches</h3><p>No player found for "${esc(state.searchQuery)}".</p></div>`;
+  }
+  return `<div class="tierboard">
+    ${Object.entries(COUNTRIES).map(([code, d]) => {
+      const players = searched.filter(p => (p.country||'') === code)
+        .sort((a,b)=> mode==='overall' ? totalPoints(b)-totalPoints(a) : (b.modes[mode]?.points||0)-(a.modes[mode]?.points||0));
+      return `<div class="tier-group">
+        <div class="tier-head">
+          <span class="tier-title">📍 ${d.label}</span>
+          <span class="tier-count">${players.length} player${players.length===1?'':'s'}</span>
+          <div class="tier-line"></div>
+        </div>
+        <div class="tier-cards">
+          ${players.length ? players.map((p,i) => {
+            const pts = mode==='overall' ? totalPoints(p) : (p.modes[mode]?.points || 0);
+            const tier = mode==='overall' ? '' : (p.modes[mode]?.tier || 'LT5');
+            return `<div class="mini-card" onclick="openProfile('${p.id}')">
+              ${i===0 ? '<span title="District champion" style="margin-right:1px;">👑</span>' : ''}
+              ${skinThumb(p)}
+              <span class="un">${esc(p.username)}${tier ? ` · ${tier}` : ''}</span>
+              <span class="pts-mini">${pts}pt</span>
+            </div>`;
+          }).join('') : `<div class="empty-tier">No players from this district yet</div>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderCompareBar(){
+  const names = state.compareIds.map(id => state.players.find(p=>p.id===id)?.username).filter(Boolean);
+  return `<div class="compare-bar">
+    <span>Compare: ${names.map(esc).join(' vs ')}${state.compareIds.length<2 ? ' — pick one more player' : ''}</span>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-sm" onclick="clearCompare()">Clear</button>
+      <button class="btn btn-gold btn-sm" ${state.compareIds.length<2?'disabled':''} onclick="openCompare()">Compare</button>
+    </div>
+  </div>`;
+}
+
+function renderCompareModal(){
+  const [p1, p2] = state.compareIds.map(id => state.players.find(x=>x.id===id));
+  if(!p1 || !p2) return '';
+  return `<div class="overlay" onclick="if(event.target===this) closeCompare()">
+    <div class="modal wide">
+      <button class="modal-close" onclick="closeCompare()">&times;</button>
+      <h2>Player Comparison</h2>
+      <p class="sub">${countryFlag(p1.country)} ${esc(p1.username)} vs ${countryFlag(p2.country)} ${esc(p2.username)}</p>
+      <table class="compare-table">
+        <thead><tr><th style="text-align:left;">Mode</th><th>${esc(p1.username)}</th><th>${esc(p2.username)}</th></tr></thead>
+        <tbody>
+          <tr><td class="mname">Overall</td>
+            <td>${totalPoints(p1)} pts</td>
+            <td>${totalPoints(p2)} pts</td>
+          </tr>
+          ${MODES.map(m=>{
+            const a = p1.modes?.[m] || {tier:'LT5',points:0};
+            const b = p2.modes?.[m] || {tier:'LT5',points:0};
+            return `<tr>
+              <td class="mname">${modeIcon(m)}${MODE_LABELS[m]}</td>
+              <td>${a.tier} · ${a.points}pt</td>
+              <td>${b.tier} · ${b.points}pt</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ===================== PLAYER PROFILE ===================== */
+function renderProfileModal(){
+  const p = state.players.find(x => x.id === state.profileId);
+  if(!p){ return ''; }
+  const overallSorted = [...state.players].sort((a,b)=> totalPoints(b) - totalPoints(a));
+  const overallRank = overallSorted.findIndex(x => x.id === p.id) + 1;
+  const canEdit = !!state.session;
+  return `<div class="overlay" onclick="if(event.target===this) closeProfile()">
+    <div class="modal profile-modal">
+      <button class="modal-close" onclick="closeProfile()">&times;</button>
+      <div class="profile-head">
+        <div class="profile-skin">${skinThumb(p,'skin-thumb profile-skin-thumb')}</div>
+        <div class="profile-id">
+          <h2>${countryFlag(p.country)} ${esc(p.username)}</h2>
+          <span class="acc ${p.accountType}">${p.accountType}</span>
+          ${p.country ? `<span class="note">${countryLabel(p.country)}</span>` : ''}
+          ${p.discord ? `<div class="discord-tag" onclick="copyDiscordTag('${esc(p.discord)}')" title="Click to copy">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M20.3 4.4A19.7 19.7 0 0 0 15.6 3c-.2.4-.5 1-.7 1.4a18 18 0 0 0-5.8 0c-.2-.4-.4-1-.7-1.4a19.6 19.6 0 0 0-4.7 1.4C1.5 8.7.8 12.9 1.1 17c1.9 1.4 3.8 2.3 5.6 2.9.5-.6.9-1.3 1.2-2a13 13 0 0 1-1.9-.9l.5-.4c3.6 1.7 7.5 1.7 11.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2 1.8-.6 3.7-1.5 5.6-2.9.4-4.7-.8-8.9-2.7-12.6ZM8.5 14.4c-1.1 0-2-1-2-2.2s.9-2.2 2-2.2 2 1 2 2.2-.9 2.2-2 2.2Zm7 0c-1.1 0-2-1-2-2.2s.9-2.2 2-2.2 2 1 2 2.2-.9 2.2-2 2.2Z"/></svg>
+            ${esc(p.discord)}
+          </div>` : ''}
+        </div>
+        <div class="profile-overall">
+          <span class="profile-overall-pts">${totalPoints(p)}</span>
+          <span class="note">TOTAL PTS · OVERALL #${overallRank}</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="profile-tiers">
+        ${MODES.map(m => {
+          const md = p.modes?.[m] || {tier:'LT5', points:0};
+          const modeSorted = [...state.players].sort((a,b)=> (b.modes[m]?.points||0) - (a.modes[m]?.points||0));
+          const modeRank = modeSorted.findIndex(x => x.id === p.id) + 1;
+          const delta = pointsDelta(p, m);
+          const peak = md.peakTier || md.tier;
+          return `<div class="profile-tier-row">
+            ${tierBadge(md.tier,'profile-tier-badge')}
+            <div class="profile-tier-info">
+              <span class="profile-tier-mode">${modeIcon(m)}${MODE_LABELS[m]} ${rankArrowHTML(delta)}</span>
+              <span class="note">Rank #${modeRank}${peak !== md.tier ? ` · <span class="peak-note">Peak: ${peak}</span>` : ''}</span>
+            </div>
+            <div class="pts profile-tier-pts">${md.points}<span>PTS</span></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="divider"></div>
+      <span class="section-label" style="margin-bottom:6px;">Points History</span>
+      <div class="chart-wrap">${sparklineSVG(pointsHistory(p.id))}</div>
+      <div class="modal-actions">
+        <button class="btn btn-sm" onclick="exportPlayerCard('${p.id}')">Download card</button>
+        <button class="btn btn-sm" onclick="closeProfile(); toggleCompare('${p.id}');">Add to compare</button>
+        ${canEdit ? `<button class="btn btn-gold" onclick="closeProfile(); openEditPlayer('${p.id}');">Edit player</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===================== MODAL ===================== */
+function renderModal(){
+  const body = state.session ? renderPanel() : renderLogin();
+  return `<div class="overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal ${state.session ? 'wide' : ''}">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      ${body}
+    </div>
+  </div>`;
+}
+
+function renderLogin(){
+  const tab = state.modalTab === 'admin-login' ? 'admin-login' : 'owner-login';
+  const step = state.ownerLoginStep || 1;
+  const stepField = step===1
+    ? `<div class="field"><label>Owner password (1/3)</label><input id="ownerPassIn" type="password" placeholder="Password" autofocus></div>`
+    : step===2
+    ? `<div class="field"><label>Verification code (2/3)</label><input id="ownerPassIn" type="password" placeholder="Second code" autofocus></div>`
+    : `<div class="field"><label>Verification code (3/3)</label><input id="ownerPassIn" type="password" placeholder="Third code" autofocus></div>`;
+  return `
+    <h2>Owner / Admin Login</h2>
+    <p class="sub">Log in to add players, adjust tiers and points, or manage admins.</p>
+    <div class="tab-row">
+      <button class="${tab==='owner-login'?'active':''}" onclick="setModalTab('owner-login')">Owner</button>
+      <button class="${tab==='admin-login'?'active':''}" onclick="setModalTab('admin-login')">Admin</button>
+    </div>
+    ${state.loginErr ? `<div class="modal-err">${esc(state.loginErr)}</div>` : ''}
+    ${tab==='owner-login' ? `
+      <p class="note">Step ${step} of 3</p>
+      ${stepField}
+      <div class="modal-actions"><button class="btn btn-gold" onclick="doOwnerLogin()">${step<3?'Continue':'Log in as owner'}</button></div>
+    ` : `
+      <div class="field"><label>Admin username</label><input id="adminUserIn" type="text" placeholder="Username"></div>
+      <div class="field"><label>Admin password</label><input id="adminPassIn" type="password" placeholder="Password"></div>
+      <div class="modal-actions"><button class="btn btn-gold" onclick="doAdminLogin()">Log in as admin</button></div>
+    `}
+  `;
+}
+
+function renderPanel(){
+  const isOwner = state.session.role === 'owner';
+  const tab = state.modalTab;
+  return `
+    <h2>${isOwner ? 'Owner Panel' : 'Admin Panel'}</h2>
+    <p class="sub">Manage the Maghreb Tierlist.</p>
+    <div class="tab-row">
+      <button class="${tab==='add'?'active':''}" onclick="openAddPlayer()">Add Player</button>
+      <button class="${tab==='manage'?'active':''}" onclick="setModalTab('manage')">Manage Players</button>
+      ${isOwner ? `<button class="${tab==='admins'?'active':''}" onclick="setModalTab('admins')">Admins</button>` : ''}
+      ${isOwner ? `<button class="${tab==='activity'?'active':''}" onclick="setModalTab('activity')">Activity</button>` : ''}
+      ${isOwner ? `<button class="${tab==='settings'?'active':''}" onclick="setModalTab('settings')">Settings</button>` : ''}
+    </div>
+    ${tab==='manage' ? renderManagePlayers() : tab==='admins' && isOwner ? renderAdminsTab() : tab==='activity' && isOwner ? renderActivityTab() : tab==='settings' && isOwner ? renderSettingsTab() : renderPlayerForm()}
+  `;
+}
+
+function renderSettingsTab(){
+  const hasInvite = !!(state.settings.discordInvite || '').trim();
+  return `
+    ${state.toast ? `<div class="modal-ok">${esc(state.toast)}</div>` : ''}
+    <div class="field">
+      <label>Discord server invite link</label>
+      <input id="stInvite" type="text" value="${esc(state.settings.discordInvite||'')}" placeholder="https://discord.gg/yourserver">
+    </div>
+    <p class="note">When set, a "Join Discord" button appears in the site header for everyone. ${hasInvite ? '' : 'Currently hidden — no link set.'}</p>
+    <div class="modal-actions" style="justify-content:flex-start;gap:8px;">
+      <button class="btn btn-gold" onclick="saveSettings()">Save settings</button>
+      ${hasInvite ? `<button class="btn btn-sm" onclick="removeDiscordInvite()">Remove Discord link</button>` : ''}
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Discord webhook URL (optional)</label>
+      <input id="stWebhook" type="text" value="${esc(state.settings.discordWebhook||'')}" placeholder="https://discord.com/api/webhooks/...">
+    </div>
+    <p class="note">When set, an announcement is posted to this webhook whenever a player is added, edited, or removed. Leave blank to disable.</p>
+    <div class="modal-actions" style="justify-content:flex-start;">
+      <button class="btn btn-gold" onclick="saveSettings()">Save settings</button>
+    </div>
+  `;
+}
+
+function renderPlayerForm(){
+  const f = state.editForm;
+  return `
+    ${state.formErr ? `<div class="modal-err">${esc(state.formErr)}</div>` : ''}
+    <div class="row2">
+      <div class="field"><label>Username</label><input id="pfUsername" type="text" value="${esc(f.username)}" placeholder="MC username"></div>
+      <div class="field"><label>Account type</label>
+        <select id="pfAccType" onchange="onAccTypeChange(this.value)">
+          <option value="premium" ${f.accountType==='premium'?'selected':''}>Premium (NameMC / Mojang skin)</option>
+          <option value="cracked" ${f.accountType==='cracked'?'selected':''}>Cracked (SKlauncher skin)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>District</label>
+      <select id="pfCountry">
+        ${Object.entries(COUNTRIES).map(([code,c]) => `<option value="${code}" ${f.country===code?'selected':''}>${c.flag} ${c.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Discord username (optional)</label>
+      <input id="pfDiscord" type="text" value="${esc(f.discord||'')}" placeholder="e.g. username or username#1234">
+    </div>
+    <p class="note">Shown on the player's public profile so others can find/add them on Discord.</p>
+    <div class="field">
+      <label>Player picture / skin (optional override)</label>
+      <div class="skin-upload-row">
+        <div class="skin-upload-preview" id="pfSkinPreview">
+          ${f.skinUrl ? `<img src="${esc(f.skinUrl)}" alt="preview">` : `<span>No image</span>`}
+        </div>
+        <div class="skin-upload-controls">
+          <input id="pfSkinFile" type="file" accept="image/*" onchange="onSkinFileChange(event)" style="display:none">
+          <button type="button" class="btn btn-sm" onclick="document.getElementById('pfSkinFile').click()">Upload picture</button>
+          ${f.skinUrl ? `<button type="button" class="btn btn-sm btn-danger" onclick="clearSkinImage()">Remove</button>` : ''}
+        </div>
+      </div>
+      <input id="pfSkinUrl" type="text" value="${esc(f.skinUrl||'')}" placeholder="...or paste a direct image URL, or leave blank for auto-lookup" oninput="onSkinUrlType(this.value)" style="margin-top:8px;">
+      <p class="note">${f.accountType==='premium'
+        ? "Auto-lookup uses Mojang's public skin via the username (like NameMC) unless you upload/paste your own picture above."
+        : "Cracked accounts have no public skin database — auto-lookup shows a best-effort placeholder. Upload a picture or paste a direct image link above to use the real skin."}</p>
+    </div>
+    <div class="divider"></div>
+    <table class="mode-table">
+      <thead><tr><th>Mode</th><th>Tier</th><th>Points</th></tr></thead>
+      <tbody>
+        ${MODES.map(m => `
+          <tr>
+            <td class="mname">${modeIcon(m)}${MODE_LABELS[m]}</td>
+            <td><select id="tier_${m}" onchange="onTierChange('${m}', this.value)">
+              ${TIERS.map(t => `<option value="${t}" ${f.modes[m].tier===t?'selected':''}>${t}</option>`).join('')}
+            </select></td>
+            <td><input id="pts_${m}" type="number" value="${f.modes[m].points}"></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <div class="modal-actions">
+      ${state.editingId ? `<button class="btn btn-danger" onclick="deletePlayer('${state.editingId}')">Delete player</button>` : ''}
+      <button class="btn" onclick="setModalTab('manage')">Cancel</button>
+      <button class="btn btn-gold" onclick="savePlayer()">${state.editingId ? 'Save changes' : 'Add player'}</button>
+    </div>
+  `;
+}
+
+function renderManagePlayers(){
+  if(state.players.length === 0){
+    return `<p class="note">No players yet. Switch to "Add Player" to create one.</p>`;
+  }
+  const q = state.manageSearchQuery.trim().toLowerCase();
+  const filtered = [...state.players]
+    .filter(p => !q || p.username.toLowerCase().includes(q))
+    .sort((a,b)=>a.username.localeCompare(b.username));
+  return `
+    ${searchBarHTML('manageSearch', state.manageSearchQuery, 'Search player...', 'onManageSearch')}
+    ${filtered.length === 0
+      ? `<p class="note" style="margin-top:12px;">No players match "${esc(state.manageSearchQuery)}".</p>`
+      : `<div class="player-manage-list" style="margin-top:12px;">
+        ${filtered.map(p => `
+          <div class="pm-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              ${skinThumb(p,'skin-thumb')}
+              <span class="un">${esc(p.username)}</span>
+              <span class="acc ${p.accountType}">${p.accountType}</span>
+            </div>
+            <div class="pm-actions">
+              <button class="btn btn-sm" onclick="openEditPlayer('${p.id}')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deletePlayer('${p.id}')">Delete</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>`}
+  `;
+}
+
+const ADMIN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+function formatDate(ts){
+  return new Date(ts).toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+}
+function adminStatus(a){
+  const daysLeft = Math.ceil((a.expiresAt - Date.now()) / (24*60*60*1000));
+  if(daysLeft <= 0) return {label:'Expired', cls:'expired', daysLeft};
+  if(daysLeft <= 5) return {label:`Expires in ${daysLeft}d`, cls:'soon', daysLeft};
+  return {label:`Active · until ${formatDate(a.expiresAt)}`, cls:'active', daysLeft};
+}
+
+function renderAdminsTab(){
+  return `
+    ${state.formErr ? `<div class="modal-err">${esc(state.formErr)}</div>` : ''}
+    <div class="row2">
+      <div class="field"><label>New admin username</label><input id="newAdminUser" type="text" placeholder="Username"></div>
+      <div class="field"><label>New admin password</label><input id="newAdminPass" type="password" placeholder="Password"></div>
+    </div>
+    <p class="note" style="margin-top:-6px;">New admin profiles automatically expire 30 days after creation.</p>
+    <div class="modal-actions" style="justify-content:flex-start;margin-top:10px;margin-bottom:16px;">
+      <button class="btn btn-gold" onclick="addAdmin()">Add admin</button>
+    </div>
+    <div class="divider"></div>
+    <p class="sub" style="margin-bottom:8px;">Current admins</p>
+    <div class="admin-list">
+      ${state.admins.length ? state.admins.map(a => {
+        const st = adminStatus(a);
+        return `<div class="admin-row">
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span>${esc(a.username)}</span>
+            <span class="admin-status ${st.cls}">${st.label}</span>
+          </div>
+          <div class="pm-actions">
+            <button class="btn btn-sm" onclick="renewAdmin('${esc(a.username)}')">Renew 30d</button>
+            <button class="btn btn-sm btn-danger" onclick="removeAdmin('${esc(a.username)}')">Remove</button>
+          </div>
+        </div>`;
+      }).join('') : '<p class="note">No admins added yet.</p>'}
+    </div>
+  `;
+}
+
+function activityMeta(type){
+  if(type === 'add') return {label:'Added', cls:'act-add'};
+  if(type === 'delete') return {label:'Removed', cls:'act-delete'};
+  return {label:'Edited', cls:'act-edit'};
+}
+function formatDateTime(ts){
+  return new Date(ts).toLocaleString(undefined, {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+}
+function renderActivityTab(){
+  if(state.activityLog.length === 0){
+    return `<p class="note">No activity yet. Actions by admins and the owner will show up here.</p>`;
+  }
+  return `
+    <p class="sub" style="margin-bottom:10px;">Every add, edit, and removal — newest first. Revert to undo a single action.</p>
+    <div class="activity-list">
+      ${state.activityLog.map(entry => {
+        const meta = activityMeta(entry.type);
+        const desc = entry.type === 'edit' && entry.before && entry.after ? diffPlayerChanges(entry.before, entry.after) : null;
+        return `<div class="activity-row ${entry.reverted ? 'reverted' : ''}">
+          <div class="activity-top">
+            <span class="activity-tag ${meta.cls}">${meta.label}</span>
+            <span class="activity-player">${esc(entry.username)}</span>
+            <span class="activity-actor">by ${esc(entry.actorName)}${entry.actorRole==='admin' ? ' (admin)' : ''}</span>
+            <span class="activity-time">${formatDateTime(entry.ts)}</span>
+          </div>
+          ${desc ? `<ul class="activity-diff">${desc.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>` : ''}
+          <div class="activity-actions">
+            ${entry.reverted
+              ? `<span class="note">Reverted</span>`
+              : `<button class="btn btn-sm" onclick="revertActivity('${entry.id}')">Revert to before</button>`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+/* ===================== ACTIONS ===================== */
+function setMode(m){ state.currentMode = m; if(m==='overall') state.view='leaderboard'; render(); }
+function setView(v){ if(v==='tierboard' && state.currentMode==='overall') return; state.view = v; render(); }
+function setSortMode(v){ state.sortMode = v; render(); }
+function setFilterAccType(v){ state.filterAccType = v; render(); }
+function setFilterCountry(v){ state.filterCountry = v; render(); }
+
+let hubSearchTimer = null;
+function onHubSearch(v){
+  state.searchQuery = v;
+  clearTimeout(hubSearchTimer);
+  hubSearchTimer = setTimeout(()=>{
+    render();
+    const el = document.getElementById('hubSearch');
+    if(el){ el.focus(); el.setSelectionRange(v.length, v.length); }
+  }, 180);
+}
+let manageSearchTimer = null;
+function onManageSearch(v){
+  state.manageSearchQuery = v;
+  clearTimeout(manageSearchTimer);
+  manageSearchTimer = setTimeout(()=>{
+    render();
+    const el = document.getElementById('manageSearch');
+    if(el){ el.focus(); el.setSelectionRange(v.length, v.length); }
+  }, 180);
+}
+
+function openProfile(id){
+  state.profileId = id;
+  const p = state.players.find(x=>x.id===id);
+  if(p) history.replaceState(null, '', '?player=' + encodeURIComponent(p.username) + '&type=' + encodeURIComponent(p.accountType));
+  render();
+}
+function closeProfile(){
+  state.profileId = null;
+  history.replaceState(null, '', location.pathname);
+  render();
+}
+function copyProfileLink(id){
+  const p = state.players.find(x=>x.id===id);
+  if(!p) return;
+  const url = location.origin + location.pathname + '?player=' + encodeURIComponent(p.username) + '&type=' + encodeURIComponent(p.accountType);
+  navigator.clipboard?.writeText(url).then(()=>showToast('Profile link copied!')).catch(()=>showToast('Could not copy link.'));
+}
+function copyDiscordTag(tag){
+  navigator.clipboard?.writeText(tag).then(()=>showToast('Discord username copied!')).catch(()=>showToast('Could not copy.'));
+}
+
+function openAdmin(){
+  state.modalOpen = true;
+  state.loginErr = ''; state.formErr = '';
+  state.modalTab = state.session ? 'add' : 'owner-login';
+  if(state.session && !state.editForm){ state.editForm = { username:'', accountType:'premium', skinUrl:'', country:DEFAULT_DISTRICT, discord:'', modes: emptyModes() }; }
+  render();
+}
+function closeModal(){ state.modalOpen = false; state.editingId = null; state.editForm = null; state.manageSearchQuery = ''; render(); }
+function setModalTab(t){
+  state.modalTab = t; state.formErr=''; state.toast='';
+  if(t==='owner-login' || t==='admin-login'){ state.ownerLoginStep = 1; state.loginErr=''; }
+  if(t==='add'){ state.editingId = null; state.editForm = { username:'', accountType:'premium', skinUrl:'', country:DEFAULT_DISTRICT, discord:'', modes: emptyModes() }; }
+  render();
+}
+
+function doOwnerLogin(){
+  const v = document.getElementById('ownerPassIn').value;
+  const step = state.ownerLoginStep || 1;
+  if(step === 1){
+    if(v !== state.ownerPass){ state.loginErr = 'Incorrect owner password.'; render(); return; }
+    state.ownerLoginStep = 2; state.loginErr=''; render();
+    return;
+  }
+  if(step === 2){
+    if(v !== state.ownerFactor2){ state.loginErr = 'Incorrect verification code (2/3).'; render(); return; }
+    state.ownerLoginStep = 3; state.loginErr=''; render();
+    return;
+  }
+  // step 3
+  if(v !== state.ownerFactor3){ state.loginErr = 'Incorrect verification code (3/3).'; render(); return; }
+  state.session = {role:'owner'};
+  savePersonal('ml-session-v1', {role:'owner', pass:state.ownerPass});
+  state.loginErr=''; state.ownerLoginStep = 1;
+  setModalTab('add');
+}
+function doAdminLogin(){
+  const u = document.getElementById('adminUserIn').value.trim();
+  const p = document.getElementById('adminPassIn').value;
+  const found = state.admins.find(a => a.username.toLowerCase() === u.toLowerCase() && a.password === p);
+  if(!found){ state.loginErr = 'Incorrect admin username or password.'; render(); return; }
+  if(Date.now() >= found.expiresAt){ state.loginErr = `This admin profile expired on ${formatDate(found.expiresAt)}. Ask the owner to renew it.`; render(); return; }
+  state.session = {role:'admin', username: found.username};
+  savePersonal('ml-session-v1', {role:'admin', username: found.username, password: found.password});
+  state.loginErr='';
+  setModalTab('add');
+}
+function logout(){ state.session = null; clearPersonal('ml-session-v1'); closeModal(); }
+
+function onAccTypeChange(v){ state.editForm.accountType = v; render(); document.getElementById('pfSkinUrl')?.focus(); }
+function onTierChange(mode, tier){
+  state.editForm.modes[mode].tier = tier;
+  state.editForm.modes[mode].points = TIER_DEFAULT_POINTS[tier];
+  render();
+}
+
+function onSkinFileChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ state.formErr = 'Please choose an image file.'; render(); return; }
+  if(file.size > 4 * 1024 * 1024){ state.formErr = 'Image is too large — please choose one under 4MB.'; render(); return; }
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const img = new Image();
+    img.onload = function(){
+      // downscale large images so they stay light to store, keep pixel art crisp
+      const maxW = 300, maxH = 500;
+      const scale = Math.min(1, maxW / img.width, maxH / img.height);
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = scale < 1;
+      ctx.drawImage(img, 0, 0, w, h);
+      state.editForm.skinUrl = canvas.toDataURL('image/png');
+      state.formErr = '';
+      render();
+    };
+    img.onerror = function(){ state.formErr = 'Could not read that image.'; render(); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function onSkinUrlType(v){ state.editForm.skinUrl = v; }
+function clearSkinImage(){ state.editForm.skinUrl = ''; document.getElementById('pfSkinUrl').value=''; render(); }
+
+function openAddPlayer(){ setModalTab('add'); }
+function openEditPlayer(id){
+  const p = state.players.find(x=>x.id===id);
+  if(!p) return;
+  state.editingId = id;
+  state.editForm = { username:p.username, accountType:p.accountType, skinUrl:p.skinUrl||'', country:p.country||DEFAULT_DISTRICT, discord:p.discord||'', modes: JSON.parse(JSON.stringify(p.modes)) };
+  state.modalTab = 'add';
+  render();
+}
+
+/* ===================== ACTIVITY LOG ===================== */
+function currentActor(){
+  if(!state.session) return {name:'Unknown', role:'unknown'};
+  return state.session.role === 'owner' ? {name:'Owner', role:'owner'} : {name: state.session.username, role:'admin'};
+}
+async function logActivity(type, playerId, username, before, after){
+  const actor = currentActor();
+  state.activityLog.unshift({
+    id: uid(),
+    ts: Date.now(),
+    actorName: actor.name,
+    actorRole: actor.role,
+    type,
+    playerId,
+    username,
+    before: before ? JSON.parse(JSON.stringify(before)) : null,
+    after: after ? JSON.parse(JSON.stringify(after)) : null,
+    reverted: false
+  });
+  if(state.activityLog.length > 200) state.activityLog = state.activityLog.slice(0, 200);
+  await saveJSON('ml-activity-v1', state.activityLog);
+}
+function diffPlayerChanges(before, after){
+  const changes = [];
+  if(before.username !== after.username) changes.push(`Username: ${before.username} → ${after.username}`);
+  if(before.accountType !== after.accountType) changes.push(`Account type: ${before.accountType} → ${after.accountType}`);
+  if((before.skinUrl||'') !== (after.skinUrl||'')) changes.push('Picture updated');
+  MODES.forEach(m=>{
+    const b = before.modes?.[m], a = after.modes?.[m];
+    if(!b || !a) return;
+    if(b.tier !== a.tier || b.points !== a.points){
+      changes.push(`${MODE_LABELS[m]}: ${b.tier} (${b.points}pt) → ${a.tier} (${a.points}pt)`);
+    }
+  });
+  return changes.length ? changes : ['No field changes detected'];
+}
+async function revertActivity(logId){
+  const entry = state.activityLog.find(l=>l.id===logId);
+  if(!entry || entry.reverted) return;
+
+  if(entry.type === 'add'){
+    state.players = state.players.filter(p=>p.id!==entry.playerId);
+  } else if(entry.type === 'edit'){
+    const idx = state.players.findIndex(p=>p.id===entry.playerId);
+    if(idx === -1){ alert('That player no longer exists — cannot revert this edit.'); return; }
+    const conflict = state.players.find(p=>p.id!==entry.playerId && p.username.toLowerCase()===entry.before.username.toLowerCase());
+    if(conflict){ alert(`Cannot revert — another player already uses the username "${entry.before.username}".`); return; }
+    state.players[idx] = JSON.parse(JSON.stringify(entry.before));
+  } else if(entry.type === 'delete'){
+    const conflict = state.players.find(p=>p.username.toLowerCase()===entry.before.username.toLowerCase());
+    if(conflict){ alert(`Cannot restore — another player already uses the username "${entry.before.username}".`); return; }
+    state.players.push(JSON.parse(JSON.stringify(entry.before)));
+  }
+  entry.reverted = true;
+  await saveJSON('ml-players-v1', state.players);
+  await saveJSON('ml-activity-v1', state.activityLog);
+  render();
+}
+
+async function savePlayer(){
+  const username = document.getElementById('pfUsername').value.trim();
+  const accountType = document.getElementById('pfAccType').value;
+  const skinUrl = document.getElementById('pfSkinUrl').value.trim();
+  const country = document.getElementById('pfCountry').value;
+  const discord = document.getElementById('pfDiscord').value.trim();
+  if(!username){ state.formErr = 'Username is required.'; render(); return; }
+  const dupe = state.players.find(p => p.username.toLowerCase()===username.toLowerCase() && p.accountType===accountType && p.id !== state.editingId);
+  if(dupe){ state.formErr = `A ${accountType} player with this username already exists. (You can still add the same name as the other account type — premium and cracked can share a username.)`; render(); return; }
+
+  const existingBefore = state.editingId ? state.players.find(p=>p.id===state.editingId) : null;
+  const modes = {};
+  MODES.forEach(m => {
+    const tier = document.getElementById('tier_'+m).value;
+    const points = Number(document.getElementById('pts_'+m).value) || 0;
+    const prevMode = existingBefore?.modes?.[m];
+    const prevPoints = prevMode ? prevMode.points : null;
+    const peakTier = prevMode?.peakTier ? betterTier(prevMode.peakTier, tier) : tier;
+    modes[m] = { tier, points, prevPoints, peakTier };
+  });
+
+  if(state.editingId){
+    const idx = state.players.findIndex(p=>p.id===state.editingId);
+    const before = state.players[idx];
+    const after = { ...before, username, accountType, skinUrl, country, discord, modes };
+    state.players[idx] = after;
+    await saveJSON('ml-players-v1', state.players);
+    await logActivity('edit', after.id, after.username, before, after);
+    postDiscordWebhook(`✏️ **${after.username}** was updated on Maghreb Tierlist — now **${totalPoints(after)} pts** overall.`);
+  } else {
+    const player = { id: uid(), username, accountType, skinUrl, country, discord, modes };
+    state.players.push(player);
+    await saveJSON('ml-players-v1', state.players);
+    await logActivity('add', player.id, player.username, null, player);
+    postDiscordWebhook(`🆕 **${player.username}** ${countryFlag(country)} joined Maghreb Tierlist with **${totalPoints(player)} pts**!`);
+  }
+  state.formErr = '';
+  setModalTab('manage');
+}
+
+async function deletePlayer(id){
+  const player = state.players.find(p=>p.id===id);
+  state.players = state.players.filter(p=>p.id!==id);
+  await saveJSON('ml-players-v1', state.players);
+  if(player){
+    await logActivity('delete', player.id, player.username, player, null);
+    postDiscordWebhook(`❌ **${player.username}** was removed from Maghreb Tierlist.`);
+  }
+  setModalTab('manage');
+}
+
+async function addAdmin(){
+  const u = document.getElementById('newAdminUser').value.trim();
+  const p = document.getElementById('newAdminPass').value;
+  if(!u || !p){ state.formErr = 'Enter both a username and password.'; render(); return; }
+  if(state.admins.find(a=>a.username.toLowerCase()===u.toLowerCase())){ state.formErr = 'That admin username already exists.'; render(); return; }
+  const now = Date.now();
+  state.admins.push({username:u, password:p, createdAt: now, expiresAt: now + ADMIN_TTL_MS});
+  await saveJSON('ml-admins-v1', state.admins);
+  state.formErr = '';
+  setModalTab('admins');
+}
+async function renewAdmin(username){
+  const a = state.admins.find(x=>x.username===username);
+  if(a) a.expiresAt = Date.now() + ADMIN_TTL_MS;
+  await saveJSON('ml-admins-v1', state.admins);
+  setModalTab('admins');
+}
+async function removeAdmin(username){
+  state.admins = state.admins.filter(a=>a.username!==username);
+  await saveJSON('ml-admins-v1', state.admins);
+  setModalTab('admins');
+}
+
+/* ===================== INIT ===================== */
+loadAll();
+</script>
+</body>
+</html>
