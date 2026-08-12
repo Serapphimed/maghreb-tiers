@@ -894,9 +894,9 @@ function renderLeaderboard(mode){
   } else {
     rows = [...state.players].sort((a,b)=> (b.modes[mode]?.points||0) - (a.modes[mode]?.points||0));
   }
- const filtered = rows.filter(p => matchesSearch(p, state.searchQuery) && matchesFilters(p));
-  const ranked = filtered.map((p,i)=>({p, rank:i+1}));
- if(ranked.length === 0){
+const ranked = rows.map((p,i)=>({p, rank:i+1}));
+const filtered = ranked.filter(x => matchesSearch(x.p, state.searchQuery) && matchesFilters(x.p));
+if(filtered.length === 0){
     return `<div class="empty-state"><h3>No matches</h3><p>No player found for "${esc(state.searchQuery)}".</p></div>`;
   }
   return `<div class="board">
