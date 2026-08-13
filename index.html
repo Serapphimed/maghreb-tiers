@@ -312,6 +312,8 @@ function regionTypeLabel(country){
 function normalizePlayerLocation(p){
   const old = p.country;
   if(LEGACY_REGION_MAP[old]) return {...p, country:'MA', region:LEGACY_REGION_MAP[old]};
+  // Empty country is a valid choice.
+  if(old === '') return {...p, country:'', region:''};
   if(!COUNTRIES[old]) return {...p, country:DEFAULT_COUNTRY, region:p.region||DEFAULT_REGION};
   if(!p.region && old==='MA') return {...p, region:DEFAULT_REGION};
   return {...p, region:p.region||''};
@@ -1311,13 +1313,14 @@ function renderPlayerForm(){
       <div class="field">
         <label>Country</label>
         <select id="pfCountry" onchange="onFormCountryChange(this.value)">
+          <option value="" ${f.country===''?'selected':''}>None</option>
           ${Object.entries(COUNTRIES).map(([code,c]) => `<option value="${code}" ${f.country===code?'selected':''}>${c.flag} ${c.label}</option>`).join('')}
         </select>
       </div>
       <div class="field">
         <label>${regionTypeLabel(f.country)}</label>
-        <select id="pfRegion" ${subdivisionsFor(f.country).length?'':'disabled'}>
-          <option value="">${subdivisionsFor(f.country).length ? `Select ${regionTypeLabel(f.country).toLowerCase()} (optional)` : 'No subdivisions available'}</option>
+        <select id="pfRegion" ${f.country && subdivisionsFor(f.country).length?'':'disabled'}>
+          <option value="">None</option>
           ${subdivisionsFor(f.country).map(r=>`<option value="${r.code}" ${f.region===r.code?'selected':''}>${r.name}</option>`).join('')}
         </select>
       </div>
@@ -1530,14 +1533,14 @@ function openAdmin(){
   state.modalOpen = true;
   state.loginErr = ''; state.formErr = '';
   state.modalTab = state.session ? 'add' : 'owner-login';
-  if(state.session && !state.editForm){ state.editForm = { username:'', accountType:'premium', skinUrl:'', country:DEFAULT_COUNTRY, region:DEFAULT_REGION, discord:'', modes: emptyModes() }; }
+  if(state.session && !state.editForm){ state.editForm = { username:'', accountType:'premium', skinUrl:'', country:'', region:'', discord:'', modes: emptyModes() }; }
   render();
 }
 function closeModal(){ state.modalOpen = false; state.editingId = null; state.editForm = null; state.manageSearchQuery = ''; render(); }
 function setModalTab(t){
   state.modalTab = t; state.formErr=''; state.toast='';
   if(t==='owner-login' || t==='admin-login'){ state.ownerLoginStep = 1; state.loginErr=''; }
-  if(t==='add'){ state.editingId = null; state.editForm = { username:'', accountType:'premium', skinUrl:'', country:DEFAULT_COUNTRY, region:DEFAULT_REGION, discord:'', modes: emptyModes() }; }
+  if(t==='add'){ state.editingId = null; state.editForm = { username:'', accountType:'premium', skinUrl:'', country:'', region:'', discord:'', modes: emptyModes() }; }
   render();
 }
 
@@ -1575,6 +1578,7 @@ function doAdminLogin(){
 function logout(){ state.session = null; clearPersonal('ml-session-v1'); closeModal(); }
 
 function onAccTypeChange(v){ state.editForm.accountType = v; render(); document.getElementById('pfSkinUrl')?.focus(); }
+function onFormCountryChange(v){ state.editForm.country = v || ''; state.editForm.region = ''; render(); }
 function onTierChange(mode, tier){
   state.editForm.modes[mode].tier = tier;
   state.editForm.modes[mode].points = TIER_DEFAULT_POINTS[tier];
@@ -1617,7 +1621,7 @@ function openEditPlayer(id){
   const p = state.players.find(x=>x.id===id);
   if(!p) return;
   state.editingId = id;
-  state.editForm = { username:p.username, accountType:p.accountType, skinUrl:p.skinUrl||'', country:(LEGACY_REGION_MAP[p.country] ? 'MA' : (p.country||DEFAULT_COUNTRY)), region:(p.region || LEGACY_REGION_MAP[p.country] || (p.country==='MA' ? DEFAULT_REGION : '')), discord:p.discord||'', modes: JSON.parse(JSON.stringify(p.modes)) };
+  state.editForm = { username:p.username, accountType:p.accountType, skinUrl:p.skinUrl||'', country:(LEGACY_REGION_MAP[p.country] ? 'MA' : (p.country !== undefined ? p.country : DEFAULT_COUNTRY)), region:(p.region || LEGACY_REGION_MAP[p.country] || (p.country==='MA' ? DEFAULT_REGION : '')), discord:p.discord||'', modes: JSON.parse(JSON.stringify(p.modes)) };
   state.modalTab = 'add';
   render();
 }
