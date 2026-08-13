@@ -277,6 +277,7 @@
   <div class="grain"></div>
   <div class="wrap" id="root"></div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 /* ===================== CONFIG ===================== */
 const MODES = ['sword','axe','uhc','mace','smp','nethpot','crystal'];
@@ -340,7 +341,12 @@ let state = {
   filterAccType: 'all',      // all | premium | cracked
   filterCountry: 'all',
   compareIds: [],
-  compareOpen: false
+  compareOpen: false,
+  linkModalOpen: false,
+  linkCode: '',
+  linkErr: '',
+  linkBusy: false,
+  linkSuccessName: ''
 };
 
 /* ===================== STORAGE ===================== */
@@ -349,6 +355,7 @@ const SUPABASE_URL = 'https://gbrbajsdhvkxnchyhkms.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jfHlF0EbnEz6vc5iSmHjmQ_h5xFfzDI';
 const SUPABASE_STATE_ROW_ID = 1;
 let supabasePlayerCache = null;
+const sbAuth = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 async function supabaseRequest(path, options={}){
   const headers = {
@@ -450,6 +457,7 @@ async function loadAll(){
   await restoreSession();
   applyProfileFromURL();
   render();
+  resumePendingLink();
 }
 function applyProfileFromURL(){
   const params = new URLSearchParams(location.search);
@@ -777,6 +785,7 @@ function render(){
     ${state.modalOpen ? renderModal() : ''}
     ${state.profileId ? renderProfileModal() : ''}
     ${state.compareOpen ? renderCompareModal() : ''}
+    ${state.linkModalOpen ? renderLinkModal() : ''}
     ${renderFloatingToast()}
   `;
 }
@@ -825,6 +834,7 @@ function renderHero(){
       </div>
       <div class="header-actions">
         ${state.settings.discordInvite ? `<a class="discord-link-btn" href="${esc(state.settings.discordInvite)}" target="_blank" rel="noopener noreferrer">Join Discord</a>` : ''}
+        <button class="btn btn-ghost btn-sm" onclick="openLinkModal()">Link Discord</button>
         ${sessionPill}
         ${state.session ? `<button class="btn btn-gold" onclick="openAdmin()">Panel</button>` : ''}
       </div>
@@ -1088,6 +1098,104 @@ function renderModal(){
       ${body}
     </div>
   </div>`;
+}
+
+/* ===================== DISCORD LINK MODAL ===================== */
+function renderLinkModal(){
+  let body;
+  if(state.linkSuccessName){
+    body = `
+      <h2>Linked!</h2>
+      <p class="note">Your Discord account is now linked as <strong>${esc(state.linkSuccessName)}</strong>. You can close this and run <code>/maghreb tiers login</code> again in-game — it should now show as verified.</p>
+      <button class="btn btn-gold" onclick="closeLinkModal()">Done</button>
+    `;
+  } else {
+    body = `
+      <h2>Link your Discord</h2>
+      <p class="note">Run <code>/maghreb tiers login</code> in Minecraft chat first — it'll give you a code. Enter it below, then sign in with Discord to finish linking.</p>
+      <div class="field">
+        <label>Code from Minecraft chat</label>
+        <input id="linkCodeIn" type="text" maxlength="6" placeholder="ABC123" value="${esc(state.linkCode)}" style="text-transform:uppercase;letter-spacing:2px;">
+      </div>
+      ${state.linkErr ? `<div class="modal-err">${esc(state.linkErr)}</div>` : ''}
+      <button class="btn btn-gold" ${state.linkBusy ? 'disabled' : ''} onclick="startDiscordLink()">${state.linkBusy ? 'Working...' : 'Continue with Discord'}</button>
+    `;
+  }
+  return `<div class="overlay" onclick="if(event.target===this) closeLinkModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLinkModal()">&times;</button>
+      ${body}
+    </div>
+  </div>`;
+}
+
+function openLinkModal(){
+  state.linkModalOpen = true;
+  state.linkErr = '';
+  render();
+  const input = document.getElementById('linkCodeIn');
+  if(input) input.focus();
+}
+function closeLinkModal(){
+  state.linkModalOpen = false;
+  state.linkErr = '';
+  state.linkSuccessName = '';
+  render();
+}
+
+async function startDiscordLink(){
+  const codeIn = document.getElementById('linkCodeIn');
+  const code = (codeIn?.value || '').trim().toUpperCase();
+  if(!code){ state.linkErr = 'Enter the code shown in Minecraft chat.'; render(); return; }
+  state.linkErr = '';
+  state.linkBusy = true;
+  render();
+  await savePersonal('ml-pending-link-code', code);
+  const { error } = await sbAuth.auth.signInWithOAuth({
+    provider: 'discord',
+    options: { redirectTo: window.location.origin + window.location.pathname }
+  });
+  if(error){
+    state.linkErr = 'Could not start Discord login: ' + error.message;
+    state.linkBusy = false;
+    await clearPersonal('ml-pending-link-code');
+    render();
+  }
+}
+
+async function resumePendingLink(){
+  const pendingCode = await safeGetPersonal('ml-pending-link-code', null);
+  if(!pendingCode) return;
+  const { data: sessionData } = await sbAuth.auth.getSession();
+  const accessToken = sessionData?.session?.access_token;
+  if(!accessToken) return;
+
+  state.linkModalOpen = true;
+  state.linkBusy = true;
+  state.linkCode = pendingCode;
+  render();
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/confirm-link`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify({ code: pendingCode })
+    });
+    const json = await res.json().catch(()=> ({}));
+    if(!res.ok){
+      state.linkErr = json.error || 'Could not verify the code.';
+    } else {
+      const discordUser = sessionData.session.user.user_metadata?.full_name
+        || sessionData.session.user.user_metadata?.name
+        || 'your Discord account';
+      state.linkSuccessName = discordUser;
+    }
+  } catch(e){
+    state.linkErr = 'Network error while verifying: ' + e.message;
+  }
+  await clearPersonal('ml-pending-link-code');
+  state.linkBusy = false;
+  render();
 }
 
 function renderLogin(){
