@@ -834,7 +834,6 @@ function renderHero(){
       </div>
       <div class="header-actions">
         ${state.settings.discordInvite ? `<a class="discord-link-btn" href="${esc(state.settings.discordInvite)}" target="_blank" rel="noopener noreferrer">Join Discord</a>` : ''}
-        <button class="btn btn-ghost btn-sm" onclick="openLinkModal()">Link Discord</button>
         ${sessionPill}
         ${state.session ? `<button class="btn btn-gold" onclick="openAdmin()">Panel</button>` : ''}
       </div>
